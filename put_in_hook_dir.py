@@ -8,6 +8,7 @@ def copy_and_move(path):
     """
     
     #current_dir = os.getcwd()
+    #print current_dir
     
     
     # this is the directed of the wanted file
@@ -16,10 +17,21 @@ def copy_and_move(path):
     # This copies wanted file and sends it
     # to the wanted file to current_dir
     # NOTE: Needs correct file name
-    try:
+    
+
+    shutil.copy("pre-commit", path)
+    shutil.copy("sad.py", path)
+    shutil.copy("funny.py", path)
+    shutil.copy("pre-commit1", path)
+    shutil.copy("start.py", path)
+    """
+    if os.path.exists("pre-commit"):
+        pass
+    else:
         shutil.copy("pre-commit", path)
-    except:
-        print "The pre-commit file is not is the current working directory"
+        print "asdf"
+        print path
+    """
     
     # Puts you back in your original directory
     #os.chdir(current_dir)
@@ -72,6 +84,7 @@ def starting_point():
     """
     Gets a starting directory for the future directory search.
     """
+    current_dir = os.getcwd()
     
     dir = raw_input("Please enter a directory path to start the search from: ")
     
@@ -80,10 +93,18 @@ def starting_point():
         print "\nThank you for the starting directory!\n"
         
         print "Starting directory is: ",dir, "\n\n"
-        return dir
+        
     except:
         print "\nThat directory does not exist.\n"
         starting_point()
+        
+    os.chdir(current_dir)
+    return dir
+    
+    
+
+    os.chdir(current_dir)
+    return dir
 
 
 def add_git_to_path(path):
@@ -128,10 +149,17 @@ def main():
             
             hooks_dirs.append(dir)
             #print dir
-            
+    
+    print "\nThe pre-commit file is in the following directories: \n"  
+          
     for dir in hooks_dirs:
         
         copy_and_move(dir)
+        print dir
+        
+    
+    
+    
             
 if __name__ == '__main__':
     main()
