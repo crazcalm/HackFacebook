@@ -1,0 +1,160 @@
+#!/usr/bin/python
+
+import sys
+import urllib2
+import json
+import time
+import webbrowser
+import funny
+import start
+
+
+def server_request(creds_id, creds_username):
+    """
+    Will request info from the server and return
+    response_json["success"], which either True or False
+    """
+    req = urllib2.Request('http://gitfit.tk/pre-commit?id='+creds_id+'&username='+creds_username)
+    response = urllib2.urlopen(req)
+    response_json = json.loads(response.read())
+    #response json
+    #print response_json
+    
+    return response_json['success']
+
+def second_chances(creds_id, creds_username, link, count_limit = 5, time_given = 2):
+    """
+    This function will give the user x amount of time and y amount of
+    chances to meet the calories requirement. 
+    
+    Will return True if requirement is met
+    Will return False if requirement is not met
+    """
+    # Will count how many time we the server_request function
+    count = 0
+        
+    # This variable will hold the server_request response
+    enough_cals = False
+        
+    while(enough_cals != True):
+            
+        enough_cals = server_request(creds_id, creds_username)
+        count +=1
+            
+        # Checks to if they reached the cal check limit
+        if count >= count_limit:
+                
+            print "Sorry. You have failed the calories check too many times.\n"
+            time.sleep(3)
+            break
+            
+        print "Checking your calories for the %s time.\n\n" %(count)
+        time.sleep(time_given)
+        
+    if enough_cals == True:
+        healthy_commit()
+        
+    else:
+        #print "Time Has expired. Venmo Charity Payment of $100 will be made.
+        funny.haha()
+        
+        
+        """
+        webbrowser.open(link)
+        # url_request = 'http://gitfit.tk/venmo-call'
+        # req = urllib2.Request(url_request)
+        # response = urllib2.urlopen(req)
+        # response_json = json.loads(response.read())
+        print "Venmo Charity Payment made. Please try to commit again when you have burned enough calories."
+        """
+        exit(1)
+        
+    return enough_cals
+
+def healthy_commit():
+    """
+    This function will let the user commit
+    """
+    print 'Healthy Commit Initiated! '
+    webbrowser.open('https://twitter.com/intent/tweet?button_hashtag=GitFit')
+            
+    #save calorie count
+    exit(0)
+    
+    
+def main():
+    try:
+        user_creds = open('usercreds.txt')
+        array = []
+        for line in user_creds:
+            array.append( line )
+        if len(array)!=2:
+            print 'Keep your gitfit creds in usercres.txt dummy!'
+            exit(1)
+        creds_id = array[0].rstrip()
+        creds_username = array[1].rstrip()
+        
+        
+        req = urllib2.Request('http://gitfit.tk/pre-commit?id='+creds_id+'&username='+creds_username)
+        response = urllib2.urlopen(req)
+        response_json = json.loads(response.read())
+        #response json
+        #print response_json
+        
+        
+        """
+        # Will count how many time we the server_request function
+        count = 0
+        
+        # This variable will hold the server_request response
+        enough_cals = False
+        
+        while(enough_cals != True):
+            
+            enough_cals = server_request(creds_id, creds_username)
+            count +=1
+            
+            # Checks to if they reached the cal check limit
+            if count >= 5:
+                
+                print "Sorry. You have failed the calories check too many times.\n"
+                break
+            
+            print "Checking your calories for the %s time.\n\n" %(count)
+            time.sleep(2)
+        """
+        
+        #check calories are greater than 100
+        
+        if response_json['success']==True:
+            # print 'You can commit!'
+            
+            """
+            print 'Healthy Commit Initiated! '
+            webbrowser.open('https://twitter.com/intent/tweet?button_hashtag=GitFit')
+            
+            #save calorie count
+            exit(0)
+            """
+            healthy_commit()
+        else: 
+            print '\nYou still need to burn '+str(int(response_json['calorie_cost']) - int(response_json["jawbone"]["m_calories"]))+' calories to make a commit\n'
+            cmd_status = 'Checking For Sufficient Number of Calaries\n'
+            
+            # Need to change the google.com
+            second_chances(creds_id, creds_username, "google.com")
+            
+            
+        # the_page = response.read()
+        # the_page = 1
+        # if the_page != 1:
+        #     exit(1)
+    except IOError:
+       print 'Login to gitfit Dummy!\n'
+       start.main()
+       exit(1)
+    exit(0)
+    
+
+if __name__ == "__main__":
+    main()
